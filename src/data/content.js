@@ -5,7 +5,7 @@ const projectFiles = import.meta.glob('./projects/*.md', { query: '?raw', import
 
 export const projects = Object.entries(projectFiles)
   .sort(([a], [b]) => a.localeCompare(b))
-  .map(([, raw], i) => ({ id: i + 1, ...parseProjectMd(raw) }))
+  .map(([path, raw], i) => ({ id: i + 1, ...parseProjectMd(raw, path) }))
   .filter(Boolean)
 
 export const experiences = [

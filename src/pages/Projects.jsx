@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { ExternalLink, ChevronDown } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ExternalLink, ChevronDown, ArrowUpRight } from 'lucide-react'
 import { projects } from '../data/content'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { trackEvent } from '../utils/analytics'
@@ -44,9 +45,11 @@ function ProjectCard({ project }) {
         )}
       </div>
 
-      <h3 className="font-display text-2xl mb-3 group-hover:text-stone transition-colors">
-        {project.title}
-      </h3>
+      <Link to={`/projects/${project.slug}`}>
+        <h3 className="font-display text-2xl mb-3 group-hover:text-stone transition-colors">
+          {project.title}
+        </h3>
+      </Link>
       <p className="font-body text-sm text-stone leading-relaxed mb-6">{project.description}</p>
 
       <div className="flex flex-wrap gap-2 mb-6">
@@ -58,6 +61,16 @@ function ProjectCard({ project }) {
             {t}
           </span>
         ))}
+      </div>
+
+      <div className="flex items-center gap-4 mb-6">
+        <Link
+          to={`/projects/${project.slug}`}
+          onClick={() => trackEvent('project_detail_view', { project_title: project.title })}
+          className="inline-flex items-center gap-1 font-mono text-xs text-stone/60 hover:text-accent transition-colors"
+        >
+          Read more <ArrowUpRight size={11} />
+        </Link>
       </div>
 
       {(project.background || project.bottleneck || project.achievements) && (

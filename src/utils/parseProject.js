@@ -1,4 +1,4 @@
-export function parseProjectMd(raw) {
+export function parseProjectMd(raw, filepath) {
   const fmMatch = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/)
   if (!fmMatch) return null
 
@@ -30,7 +30,10 @@ export function parseProjectMd(raw) {
         .map((l) => l.slice(2).trim())
     : []
 
+  const slug = fm.slug || (filepath ? filepath.replace(/^.*[\\/]/, '').replace(/\.md$/, '') : '')
+
   return {
+    slug,
     title: fm.title || '',
     tech: fm.tech ? fm.tech.split(',').map((t) => t.trim()) : [],
     status: fm.status || '',
@@ -41,5 +44,6 @@ export function parseProjectMd(raw) {
     background: sections.background || '',
     bottleneck: sections.bottleneck || '',
     achievements,
+    body: fmMatch[2].trim(),
   }
 }
