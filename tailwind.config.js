@@ -19,8 +19,8 @@ export default {
         accent: '#2d2d2d',
       },
       animation: {
-        'fade-up': 'fadeUp 0.6s ease forwards',
-        'fade-in': 'fadeIn 0.5s ease forwards',
+        'fade-up': 'fadeUp 0.6s ease both',
+        'fade-in': 'fadeIn 0.5s ease both',
       },
       keyframes: {
         fadeUp: {

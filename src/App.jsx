@@ -10,12 +10,14 @@ import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
 import Contact from './pages/Contact'
 import { useDarkMode } from './hooks/useDarkMode'
+import { trackPageView } from './utils/analytics'
 
 function ScrollToTop() {
-  const { pathname } = useLocation()
+  const location = useLocation()
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [pathname])
+    trackPageView(location.pathname + location.search)
+  }, [location])
   return null
 }
 

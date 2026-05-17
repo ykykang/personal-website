@@ -1,9 +1,25 @@
-import { ExternalLink } from 'lucide-react'
+import { useState } from 'react'
+import { ExternalLink, ChevronDown } from 'lucide-react'
 import { projects } from '../data/content'
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { trackEvent } from '../utils/analytics'
 
 function ProjectCard({ project }) {
   const ref = useScrollReveal()
+  const [expanded, setExpanded] = useState(false)
+
+  function handleToggle() {
+    const next = !expanded
+    setExpanded(next)
+    if (next) {
+      trackEvent('project_detail_expand', { project_title: project.title })
+    }
+  }
+
+  function handleExternalLink() {
+    trackEvent('project_link_click', { project_title: project.title, url: project.link })
+  }
+
   return (
     <div
       ref={ref}
@@ -21,6 +37,7 @@ function ProjectCard({ project }) {
             target="_blank"
             rel="noopener noreferrer"
             className="text-stone hover:text-ink dark:hover:text-chalk transition-colors"
+            onClick={handleExternalLink}
           >
             <ExternalLink size={14} />
           </a>
@@ -32,7 +49,7 @@ function ProjectCard({ project }) {
       </h3>
       <p className="font-body text-sm text-stone leading-relaxed mb-6">{project.description}</p>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 mb-6">
         {project.tech.map((t) => (
           <span
             key={t}
@@ -42,6 +59,63 @@ function ProjectCard({ project }) {
           </span>
         ))}
       </div>
+
+      {(project.background || project.bottleneck || project.achievements) && (
+        <>
+          <button
+            onClick={handleToggle}
+            className="flex items-center gap-1.5 font-mono text-xs text-stone/60 hover:text-ink dark:hover:text-chalk transition-colors"
+          >
+            <ChevronDown
+              size={13}
+              className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+            />
+            {expanded ? 'Hide details' : 'Project details'}
+          </button>
+
+          {expanded && (
+            <div className="mt-6 space-y-5 border-t border-mist/30 dark:border-white/5 pt-6">
+              {project.background && (
+                <div>
+                  <p className="font-mono text-xs text-stone/50 tracking-widest uppercase mb-2">
+                    Background
+                  </p>
+                  <p className="font-body text-sm text-stone leading-relaxed">
+                    {project.background}
+                  </p>
+                </div>
+              )}
+
+              {project.bottleneck && (
+                <div>
+                  <p className="font-mono text-xs text-stone/50 tracking-widest uppercase mb-2">
+                    Bottleneck
+                  </p>
+                  <p className="font-body text-sm text-stone leading-relaxed">
+                    {project.bottleneck}
+                  </p>
+                </div>
+              )}
+
+              {project.achievements && project.achievements.length > 0 && (
+                <div>
+                  <p className="font-mono text-xs text-stone/50 tracking-widest uppercase mb-2">
+                    Achievements
+                  </p>
+                  <ul className="space-y-1.5">
+                    {project.achievements.map((a, i) => (
+                      <li key={i} className="flex items-start gap-2 font-body text-sm text-stone">
+                        <span className="font-mono text-stone/40 mt-0.5 shrink-0">—</span>
+                        {a}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
     </div>
   )
 }
@@ -56,7 +130,7 @@ export default function Projects() {
         tools to production workloads.
       </p>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-6 items-start">
         {projects.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}

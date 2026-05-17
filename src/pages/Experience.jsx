@@ -1,5 +1,6 @@
 import { experiences } from '../data/content'
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { trackEvent } from '../utils/analytics'
 
 function ExpItem({ exp, index }) {
   const ref = useScrollReveal()
@@ -47,6 +48,7 @@ export default function Experience() {
         <p className="font-body text-stone mb-6">Want the full picture?</p>
         <a
           href="#"
+          onClick={() => trackEvent('cv_download')}
           className="inline-flex items-center gap-2 border border-mist dark:border-white/10 text-ink dark:text-chalk px-6 py-3 text-sm font-body hover:border-ink dark:hover:border-chalk transition-colors"
         >
           Download CV / Résumé

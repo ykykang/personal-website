@@ -1,9 +1,4 @@
-// Markdown files diimport langsung sebagai raw string via Vite's ?raw suffix.
-// Untuk tambah artikel baru:
-//   1. Buat file .md di src/data/posts/
-//   2. Import di sini dengan ?raw
-//   3. Tambah entry di array blogPosts
-
+import { parseProjectMd } from '../utils/parseProject'
 import retryPatternsGo from './posts/retry-patterns-go.md?raw'
 import reksadanaVsEtf from './posts/reksadana-vs-etf.md?raw'
 import contextPropagationGo from './posts/context-propagation-go.md?raw'
@@ -11,52 +6,12 @@ import danaDaruratEngineer from './posts/dana-darurat-software-engineer.md?raw'
 import postgresExplainAnalyze from './posts/postgres-explain-analyze.md?raw'
 import dcaPasarVolatil from './posts/dca-pasar-volatil.md?raw'
 
-export const projects = [
-  {
-    id: 1,
-    title: 'GoFlow — Event-Driven Microservices Framework',
-    description:
-      'A lightweight framework built in Go for orchestrating event-driven microservices. Features automatic retry, dead-letter queues, and distributed tracing out of the box.',
-    tech: ['Go', 'Kafka', 'Redis', 'PostgreSQL', 'Docker'],
-    status: 'Open Source',
-    link: 'https://github.com',
-    year: '2024',
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'Kasir — Real-time POS & Inventory API',
-    description:
-      'High-throughput REST + WebSocket API serving a nationwide retail chain. Handles 50k+ concurrent connections with sub-10ms p99 latency using Go and Redis.',
-    tech: ['Go', 'PostgreSQL', 'Redis', 'WebSocket', 'gRPC'],
-    status: 'Production',
-    link: '#',
-    year: '2023',
-    featured: true,
-  },
-  {
-    id: 3,
-    title: 'Vaultify — Secrets & Config Manager',
-    description:
-      'Internal tooling for centralized secret rotation and environment config management across cloud environments. Integrates with Vault and AWS SSM.',
-    tech: ['Go', 'HashiCorp Vault', 'AWS SSM', 'CLI', 'YAML'],
-    status: 'Internal Tool',
-    link: '#',
-    year: '2023',
-    featured: false,
-  },
-  {
-    id: 4,
-    title: 'AnalyticsStream — Real-time Data Pipeline',
-    description:
-      'End-to-end streaming data pipeline that ingests millions of user events daily. Built with Go consumers, schema validation, and ClickHouse for analytics.',
-    tech: ['Go', 'Kafka', 'ClickHouse', 'Protobuf', 'Grafana'],
-    status: 'Production',
-    link: '#',
-    year: '2022',
-    featured: false,
-  },
-]
+const projectFiles = import.meta.glob('./projects/*.md', { query: '?raw', import: 'default', eager: true })
+
+export const projects = Object.entries(projectFiles)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, raw], i) => ({ id: i + 1, ...parseProjectMd(raw) }))
+  .filter(Boolean)
 
 export const experiences = [
   {

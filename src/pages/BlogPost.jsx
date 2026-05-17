@@ -1,8 +1,10 @@
 import { useParams, Link } from 'react-router-dom'
+import { useEffect } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { blogPosts } from '../data/content'
+import { trackEvent } from '../utils/analytics'
 
 // Syntax highlighting via highlight.js (loaded from CDN in index.html)
 // We use a simple inline approach to keep dependencies minimal
@@ -108,6 +110,15 @@ const components = {
 export default function BlogPost() {
   const { slug } = useParams()
   const post = blogPosts.find((p) => p.slug === slug)
+
+  useEffect(() => {
+    if (!post) return
+    trackEvent('blog_post_view', {
+      post_slug: post.slug,
+      post_title: post.title,
+      post_category: post.category,
+    })
+  }, [post?.slug])
 
   if (!post) {
     return (
