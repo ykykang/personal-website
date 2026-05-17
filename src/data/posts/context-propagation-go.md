@@ -1,3 +1,13 @@
+---
+title: Context Propagation in Go: The Right Way
+excerpt: A deep dive into how Go contexts should flow through your application layers — and the subtle bugs that happen when they do not.
+category: tech
+date: Mar 5, 2025
+readTime: 10 min read
+slug: context-propagation-go
+featured: false
+---
+
 ## Why Context Matters
 
 Go's `context.Context` is the idiomatic way to carry deadlines, cancellation signals, and request-scoped values across API boundaries. When done right, it makes cancellation propagate automatically. When done wrong, you leak goroutines and ignore timeouts.

@@ -6,7 +6,6 @@ const navLinks = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
   { to: '/projects', label: 'Projects' },
-  { to: '/experience', label: 'Experience' },
   { to: '/blog', label: 'Blog' },
   { to: '/contact', label: 'Contact' },
 ]
@@ -54,7 +53,7 @@ export default function Navbar({ dark, setDark }) {
                 {({ isActive }) => (
                   <>
                     {isActive && (
-                      <span className="w-1 h-1 rounded-full bg-ink dark:bg-chalk inline-block" />
+                      <span className="w-1 h-1 rounded-full bg-accent inline-block" />
                     )}
                     {label}
                   </>
@@ -101,7 +100,7 @@ export default function Navbar({ dark, setDark }) {
                   {({ isActive }) => (
                     <>
                       {isActive && (
-                        <span className="w-1 h-1 rounded-full bg-ink dark:bg-chalk inline-block" />
+                        <span className="w-1 h-1 rounded-full bg-accent inline-block" />
                       )}
                       {label}
                     </>

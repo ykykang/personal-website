@@ -38,20 +38,19 @@ export default function Contact() {
         Let's Talk
       </h1>
       <p className="font-body text-stone mb-20 max-w-md opacity-0-init animate-fade-up animate-delay-200">
-        Whether you have a project in mind, a job offer, or just want to geek out about Go
-        concurrency patterns — my inbox is open.
+        Whether you have a project in mind, a job offer, or just want to talk tech — my inbox is open.
       </p>
 
       {/* Primary CTA */}
       <a
         href="mailto:ahmadhaidaralbaqir.official@gmail.com"
         onClick={() => trackEvent('contact_click', { platform: 'email', location: 'hero' })}
-        className="group inline-flex items-center gap-4 mb-20 opacity-0-init animate-fade-up animate-delay-300"
+        className="group inline-flex items-start gap-3 mb-20 opacity-0-init animate-fade-up animate-delay-300 w-full"
       >
-        <span className="font-display text-3xl md:text-4xl group-hover:text-stone transition-colors">
+        <span className="font-display text-xl sm:text-3xl md:text-4xl group-hover:text-accent transition-colors break-all">
           ahmadhaidaralbaqir.official@gmail.com
         </span>
-        <Mail className="text-stone group-hover:text-ink dark:group-hover:text-chalk transition-colors" size={24} />
+        <Mail className="text-stone group-hover:text-ink dark:group-hover:text-chalk transition-colors shrink-0 mt-1" size={20} />
       </a>
 
       {/* Social Links */}

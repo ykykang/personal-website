@@ -1,3 +1,13 @@
+---
+title: PostgreSQL Query Planning: Reading EXPLAIN ANALYZE
+excerpt: How to actually read query plans and use them to eliminate slow queries — with real examples from production Go applications.
+category: tech
+date: Jan 30, 2025
+readTime: 12 min read
+slug: postgres-explain-analyze
+featured: false
+---
+
 ## Why EXPLAIN ANALYZE?
 
 When a query is slow, the first instinct is often to add an index and pray. But without reading the query plan, you might add the wrong index — or worse, add one that makes things slower.

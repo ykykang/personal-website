@@ -16,7 +16,8 @@ export default {
         'chalk-dark': '#ededea',
         stone: '#8a8a8a',
         mist: '#d4d4d0',
-        accent: '#2d2d2d',
+        accent: '#3B5BDB',
+        'accent-muted': '#EEF2FF',
       },
       animation: {
         'fade-up': 'fadeUp 0.6s ease both',

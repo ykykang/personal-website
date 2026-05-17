@@ -14,7 +14,7 @@ function ProjectRow({ project, index }) {
       ref={ref}
       className="group grid grid-cols-[2rem_1fr_auto] gap-6 border-t border-mist/40 dark:border-white/5 py-7 items-start"
     >
-      <span className="font-mono text-xs text-stone/40 pt-0.5">0{index}</span>
+      <span className="font-mono text-xs text-accent pt-0.5">0{index}</span>
       <div>
         <h3 className="font-display text-xl mb-1.5 group-hover:text-stone transition-colors duration-200">
           {project.title}
@@ -49,7 +49,7 @@ function PostRow({ post }) {
           <span
             className={`font-mono text-[10px] px-1.5 py-0.5 shrink-0 ${
               post.category === 'tech'
-                ? 'bg-chalk-dark dark:bg-ink-light text-stone'
+                ? 'bg-accent text-white'
                 : 'bg-ink dark:bg-chalk text-chalk dark:text-ink'
             }`}
           >
@@ -61,7 +61,7 @@ function PostRow({ post }) {
         </div>
         <ArrowUpRight
           size={13}
-          className="text-mist group-hover:text-ink dark:group-hover:text-chalk transition-colors duration-200 shrink-0"
+          className="text-mist group-hover:text-accent transition-colors duration-200 shrink-0"
         />
       </Link>
     </div>

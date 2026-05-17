@@ -36,7 +36,7 @@ function ProjectCard({ project }) {
             href={project.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-stone hover:text-ink dark:hover:text-chalk transition-colors"
+            className="text-stone hover:text-accent transition-colors"
             onClick={handleExternalLink}
           >
             <ExternalLink size={14} />
@@ -64,7 +64,7 @@ function ProjectCard({ project }) {
         <>
           <button
             onClick={handleToggle}
-            className="flex items-center gap-1.5 font-mono text-xs text-stone/60 hover:text-ink dark:hover:text-chalk transition-colors"
+            className="flex items-center gap-1.5 font-mono text-xs text-stone/60 hover:text-accent transition-colors"
           >
             <ChevronDown
               size={13}

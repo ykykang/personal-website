@@ -1,3 +1,13 @@
+---
+title: Membangun Dana Darurat dengan Gaji Software Engineer
+excerpt: Strategi praktis mengalokasikan sebagian penghasilan untuk dana darurat yang cukup — tanpa harus mengorbankan investasi jangka panjang.
+category: finance
+date: Feb 14, 2025
+readTime: 5 min read
+slug: dana-darurat-software-engineer
+featured: false
+---
+
 ## Berapa Besar Dana Darurat yang Ideal?
 
 Aturan umum: **3-6 bulan pengeluaran bulanan**. Tapi sebagai software engineer yang mungkin bekerja sebagai karyawan tetap atau freelancer, jawabannya bisa berbeda.

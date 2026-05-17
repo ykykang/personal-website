@@ -1,3 +1,13 @@
+---
+title: Reksadana vs ETF: Mana yang Cocok untuk Kamu?
+excerpt: Perbandingan mendalam antara reksa dana konvensional dan ETF — dari biaya, likuiditas, hingga strategi alokasi portofolio jangka panjang.
+category: finance
+date: Mar 28, 2025
+readTime: 6 min read
+slug: reksadana-vs-etf
+featured: true
+---
+
 ## Reksa Dana vs ETF: Beda Tapi Satu Tujuan
 
 Keduanya adalah wadah investasi kolektif — kamu membeli unit yang mewakili sekeranjang aset (saham, obligasi, dll). Perbedaannya ada di **cara diperdagangkan** dan **struktur biaya**.

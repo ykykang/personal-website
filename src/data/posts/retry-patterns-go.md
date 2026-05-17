@@ -1,3 +1,13 @@
+---
+title: Designing for Failure: Retry Patterns in Go Microservices
+excerpt: How to implement robust retry logic with exponential backoff, jitter, and circuit breakers without drowning your downstream services.
+category: tech
+date: Apr 12, 2025
+readTime: 8 min read
+slug: retry-patterns-go
+featured: true
+---
+
 ## The Problem with Naive Retries
 
 Most engineers reach for a simple retry loop when a network call fails. It looks innocent:

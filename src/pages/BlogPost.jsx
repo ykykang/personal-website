@@ -147,7 +147,7 @@ export default function BlogPost() {
           <span
             className={`font-mono text-xs px-2 py-0.5 ${
               post.category === 'tech'
-                ? 'bg-chalk-dark dark:bg-ink-light text-stone'
+                ? 'bg-accent text-white'
                 : 'bg-ink dark:bg-chalk text-chalk dark:text-ink'
             }`}
           >

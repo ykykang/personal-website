@@ -1,3 +1,13 @@
+---
+title: Dollar-Cost Averaging di Pasar yang Volatil
+excerpt: Mengapa DCA tetap menjadi strategi yang relevan bahkan di tengah volatilitas pasar — dan bagaimana mengotomatisasinya.
+category: finance
+date: Jan 10, 2025
+readTime: 7 min read
+slug: dca-pasar-volatil
+featured: false
+---
+
 ## Apa itu Dollar-Cost Averaging?
 
 DCA adalah strategi investasi di mana kamu membeli aset dalam jumlah **tetap secara berkala** — mingguan atau bulanan — terlepas dari harga pasar saat itu.
