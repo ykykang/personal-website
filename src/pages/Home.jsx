@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
 import { projects, blogPosts } from '../data/content'
+import { siteConfig } from '../data/config'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 
 const featuredProjects = projects.filter((p) => p.featured)
@@ -72,10 +73,18 @@ export default function Home() {
     <main className="min-h-screen">
       {/* Hero */}
       <section className="max-w-5xl mx-auto px-6 pt-40 pb-0">
-        <div className="mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <p className="font-mono text-xs text-stone/50 tracking-widest uppercase animate-fade-in">
             Backend engineer · Go · Jakarta, Indonesia
           </p>
+          <div className="flex items-center gap-2 animate-fade-in">
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${siteConfig.available ? 'bg-green-400' : 'bg-stone/40'}`}
+            />
+            <span className="font-mono text-xs text-stone/50">
+              {siteConfig.availabilityNote}
+            </span>
+          </div>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 border-b border-mist/40 dark:border-white/5 pb-16">
