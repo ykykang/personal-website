@@ -6,6 +6,12 @@ import { ArrowUpRight } from 'lucide-react'
 
 function PostCard({ post }) {
   const ref = useScrollReveal()
+  const categoryLabel = post.category === 'tech' ? 'Engineering' : 'Money notes'
+  const categoryClass =
+    post.category === 'tech'
+      ? 'bg-accent text-white'
+      : 'bg-[#F3E8FF] text-[#6D28D9] dark:bg-[#2A173D] dark:text-[#D8B4FE]'
+
   return (
     <Link
       to={`/blog/${post.slug}`}
@@ -14,13 +20,9 @@ function PostCard({ post }) {
     >
       <div className="flex items-center gap-3 mb-3">
         <span
-          className={`font-mono text-xs px-2 py-0.5 ${
-            post.category === 'tech'
-              ? 'bg-accent text-white'
-              : 'bg-ink dark:bg-chalk text-chalk dark:text-ink'
-          }`}
+          className={`font-mono text-xs px-2 py-0.5 ${categoryClass}`}
         >
-          {post.category === 'tech' ? 'Tech' : 'Finance'}
+          {categoryLabel}
         </span>
         {post.featured && (
           <span className="font-mono text-xs px-2 py-0.5 border border-mist/60 dark:border-white/10 text-stone/60">
@@ -63,8 +65,8 @@ export default function Blog() {
       <div className="flex gap-2 mb-10">
         {[
           { key: 'all', label: 'All Posts' },
-          { key: 'tech', label: 'Tech' },
-          { key: 'finance', label: 'Finance' },
+          { key: 'tech', label: 'Engineering' },
+          { key: 'finance', label: 'Money notes' },
         ].map(({ key, label }) => (
           <button
             key={key}

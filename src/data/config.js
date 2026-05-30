@@ -1,4 +1,4 @@
 export const siteConfig = {
   available: false,
-  availabilityNote: 'Not taking on new work right now',
+  availabilityNote: 'Focused on current role, open to say hello',
 }

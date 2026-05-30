@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
-import { useEffect } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ArrowLeft, Hand } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { blogPosts } from '../data/content'
@@ -107,9 +107,41 @@ const components = {
   hr: () => <hr className="border-mist/40 dark:border-white/5 my-10" />,
 }
 
+const clapStoragePrefix = 'blog-claps'
+
+function getStoredClaps(slug) {
+  if (typeof window === 'undefined' || !slug) return 0
+
+  try {
+    const stored = window.localStorage?.getItem(`${clapStoragePrefix}:${slug}`)
+    const count = Number.parseInt(stored || '0', 10)
+
+    return Number.isFinite(count) ? count : 0
+  } catch {
+    return 0
+  }
+}
+
+function storeClaps(slug, count) {
+  if (typeof window === 'undefined' || !slug) return
+
+  try {
+    window.localStorage?.setItem(`${clapStoragePrefix}:${slug}`, String(count))
+  } catch {
+    // Clap still works for the current page view when storage is unavailable.
+  }
+}
+
 export default function BlogPost() {
   const { slug } = useParams()
   const post = blogPosts.find((p) => p.slug === slug)
+  const [claps, setClaps] = useState(0)
+  const [justClapped, setJustClapped] = useState(false)
+  const categoryLabel = post?.category === 'tech' ? 'Engineering' : 'Money notes'
+  const categoryClass =
+    post?.category === 'tech'
+      ? 'bg-accent text-white'
+      : 'bg-[#F3E8FF] text-[#6D28D9] dark:bg-[#2A173D] dark:text-[#D8B4FE]'
 
   useEffect(() => {
     if (!post) return
@@ -119,6 +151,28 @@ export default function BlogPost() {
       post_category: post.category,
     })
   }, [post?.slug])
+
+  useEffect(() => {
+    if (!post) return
+    setClaps(getStoredClaps(post.slug))
+    setJustClapped(false)
+  }, [post?.slug])
+
+  function handleClap() {
+    if (!post) return
+
+    const nextClaps = claps + 1
+
+    setClaps(nextClaps)
+    storeClaps(post.slug, nextClaps)
+    setJustClapped(true)
+    window.setTimeout(() => setJustClapped(false), 450)
+    trackEvent('blog_post_clap', {
+      post_slug: post.slug,
+      post_title: post.title,
+      clap_count: nextClaps,
+    })
+  }
 
   if (!post) {
     return (
@@ -144,14 +198,8 @@ export default function BlogPost() {
       {/* Header */}
       <header className="mb-12 animate-fade-up">
         <div className="flex items-center gap-3 mb-5">
-          <span
-            className={`font-mono text-xs px-2 py-0.5 ${
-              post.category === 'tech'
-                ? 'bg-accent text-white'
-                : 'bg-ink dark:bg-chalk text-chalk dark:text-ink'
-            }`}
-          >
-            {post.category === 'tech' ? 'Tech' : 'Finance'}
+          <span className={`font-mono text-xs px-2 py-0.5 ${categoryClass}`}>
+            {categoryLabel}
           </span>
           <span className="font-mono text-xs text-stone/50">{post.date}</span>
           <span className="font-mono text-xs text-stone/40">·</span>
@@ -159,6 +207,25 @@ export default function BlogPost() {
         </div>
         <h1 className="font-display text-4xl md:text-5xl leading-[1.1] mb-6">{post.title}</h1>
         <p className="font-body text-base text-stone leading-relaxed">{post.excerpt}</p>
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={handleClap}
+            className={`group inline-flex items-center gap-2 rounded-full border px-3 py-2 font-mono text-xs transition-all duration-200 ${
+              justClapped
+                ? 'border-accent bg-accent-muted text-accent scale-105 dark:bg-accent/20'
+                : 'border-mist/60 text-stone hover:border-accent hover:text-accent dark:border-white/10'
+            }`}
+            aria-label={`Clap for ${post.title}`}
+          >
+            <Hand size={14} className="transition-transform duration-200 group-hover:-rotate-12" />
+            <span>Clap</span>
+            <span className="text-stone/60">{claps}</span>
+          </button>
+          <span className="font-mono text-xs text-stone/40">
+            Let me know this was useful
+          </span>
+        </div>
         <div className="border-t border-mist/40 dark:border-white/5 mt-10" />
       </header>
 
@@ -177,7 +244,14 @@ export default function BlogPost() {
         >
           <ArrowLeft size={12} /> All Posts
         </Link>
-        <span className="font-mono text-xs text-stone/40">{post.readTime}</span>
+        <button
+          type="button"
+          onClick={handleClap}
+          className="inline-flex items-center gap-2 font-mono text-xs text-stone/40 hover:text-accent transition-colors"
+          aria-label={`Clap for ${post.title}`}
+        >
+          <Hand size={12} /> {claps} claps
+        </button>
       </div>
     </main>
   )

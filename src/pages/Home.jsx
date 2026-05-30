@@ -7,22 +7,43 @@ import { useScrollReveal } from '../hooks/useScrollReveal'
 const featuredProjects = projects.filter((p) => p.featured)
 const featuredPosts = blogPosts.filter((p) => p.featured)
 
+const projectAccents = [
+  'bg-accent-muted text-accent',
+  'bg-[#FFF4D6] text-[#8A5A00] dark:bg-[#3A2D10] dark:text-[#F5D06F]',
+  'bg-[#E8F7F1] text-[#1F7A55] dark:bg-[#123228] dark:text-[#8DE0BC]',
+]
+
+const postAccents = {
+  tech: 'bg-accent text-white',
+  finance: 'bg-[#F3E8FF] text-[#6D28D9] dark:bg-[#2A173D] dark:text-[#D8B4FE]',
+}
+
+const postLabels = {
+  tech: 'Engineering',
+  finance: 'Money notes',
+}
+
+const currentLearning = ['Kafka internals', 'Database indexing', 'Financial planning']
+
 function ProjectRow({ project, index }) {
   const ref = useScrollReveal()
+  const accent = projectAccents[(index - 1) % projectAccents.length]
+
   return (
-    <div
+    <Link
+      to={`/projects/${project.slug}`}
       ref={ref}
-      className="group grid grid-cols-[2rem_1fr_auto] gap-6 border-t border-mist/40 dark:border-white/5 py-7 items-start"
+      className="group grid grid-cols-[2rem_1fr_auto] gap-6 border-t border-mist/40 dark:border-white/5 py-7 items-start transition-colors duration-200 hover:border-accent/40"
     >
-      <span className="font-mono text-xs text-accent pt-0.5">0{index}</span>
+      <span className={`font-mono text-xs pt-0.5 h-fit px-1.5 py-0.5 ${accent}`}>0{index}</span>
       <div>
-        <h3 className="font-display text-xl mb-1.5 group-hover:text-stone transition-colors duration-200">
+        <h3 className="font-display text-xl mb-1.5 group-hover:text-accent transition-colors duration-200">
           {project.title}
         </h3>
         <p className="font-body text-sm text-stone leading-relaxed mb-3">{project.description}</p>
         <div className="flex flex-wrap gap-3">
           {project.tech.slice(0, 4).map((t) => (
-            <span key={t} className="font-mono text-xs text-stone/50">
+            <span key={t} className="font-mono text-xs text-stone/50 transition-colors duration-200 group-hover:text-stone">
               {t}
             </span>
           ))}
@@ -32,30 +53,27 @@ function ProjectRow({ project, index }) {
         <p className="font-mono text-xs text-stone/50">{project.year}</p>
         <p className="font-mono text-xs text-stone/35 mt-1">{project.status}</p>
       </div>
-    </div>
+    </Link>
   )
 }
 
 function PostRow({ post }) {
   const ref = useScrollReveal()
+  const badgeClass = postAccents[post.category] || 'bg-ink dark:bg-chalk text-chalk dark:text-ink'
+  const label = postLabels[post.category] || post.category
+
   return (
     <div ref={ref} className="border-t border-mist/40 dark:border-white/5">
       <Link
         to={`/blog/${post.slug}`}
-        className="group grid grid-cols-[auto_1fr_auto] gap-6 py-5 items-center"
+        className="group grid grid-cols-[auto_1fr_auto] gap-6 py-5 items-center transition-colors duration-200 hover:border-accent"
       >
         <span className="font-mono text-xs text-stone/40 w-14 shrink-0">{post.date.split(',')[0]}</span>
         <div className="flex items-center gap-3 min-w-0">
-          <span
-            className={`font-mono text-[10px] px-1.5 py-0.5 shrink-0 ${
-              post.category === 'tech'
-                ? 'bg-accent text-white'
-                : 'bg-ink dark:bg-chalk text-chalk dark:text-ink'
-            }`}
-          >
-            {post.category.toUpperCase()}
+          <span className={`font-mono text-[10px] px-1.5 py-0.5 shrink-0 ${badgeClass}`}>
+            {label}
           </span>
-          <span className="font-body text-sm group-hover:text-stone transition-colors duration-200 truncate">
+          <span className="font-body text-sm group-hover:text-accent transition-colors duration-200 truncate">
             {post.title}
           </span>
         </div>
@@ -87,44 +105,72 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 border-b border-mist/40 dark:border-white/5 pb-16">
+        <div className="relative flex flex-col md:flex-row md:items-end md:justify-between gap-8 border-b border-mist/40 dark:border-white/5 pb-16">
+          <div className="absolute -left-4 top-4 h-24 w-24 rounded-full bg-accent-muted blur-3xl dark:bg-accent/20" />
+          <div className="absolute left-40 bottom-16 h-20 w-20 rounded-full bg-[#FFF4D6] blur-3xl dark:bg-[#3A2D10]" />
           <h1
-            className="font-display leading-[0.88] tracking-tight opacity-0-init animate-fade-up animate-delay-100"
+            className="relative font-display leading-[0.88] tracking-tight opacity-0-init animate-fade-up animate-delay-100"
             style={{ fontSize: 'clamp(4.5rem, 11vw, 7.5rem)' }}
           >
             Ahmad
             <br />
             Haidar
             <br />
-            <span className="text-stone">Albaqir</span>
+            <span className="text-accent">Albaqir</span>
           </h1>
 
-          <div className="flex flex-row md:flex-col gap-6 md:gap-3 pb-1 opacity-0-init animate-fade-up animate-delay-200">
+          <div className="relative flex flex-col gap-3 pb-1 opacity-0-init animate-fade-up animate-delay-200">
+           
             <Link
               to="/projects"
-              className="font-mono text-xs text-stone hover:text-ink dark:hover:text-chalk transition-colors flex items-center gap-1.5"
+              className="group/link font-mono text-xs text-stone hover:text-accent transition-colors flex items-center gap-1.5"
             >
-              View work <ArrowUpRight size={11} />
+              View work
+              <ArrowUpRight
+                size={11}
+                className="transition-transform duration-200 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+              />
             </Link>
             <Link
               to="/contact"
-              className="font-mono text-xs text-stone hover:text-ink dark:hover:text-chalk transition-colors flex items-center gap-1.5"
+              className="group/link font-mono text-xs text-stone hover:text-accent transition-colors flex items-center gap-1.5"
             >
-              Get in touch <ArrowUpRight size={11} />
+              Get in touch
+              <ArrowUpRight
+                size={11}
+                className="transition-transform duration-200 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+              />
             </Link>
           </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 pt-6 opacity-0-init animate-fade-up animate-delay-300">
+          <span className="font-mono text-xs text-stone/50">Currently learning</span>
+          {currentLearning.map((item, index) => (
+            <span
+              key={item}
+              className="learning-chip font-mono text-[10px] px-2 py-1 bg-accent-muted text-accent dark:bg-accent/20 dark:text-blue-200"
+              style={{ animationDelay: `${420 + index * 90}ms` }}
+            >
+              {item}
+            </span>
+          ))}
         </div>
       </section>
 
       {/* Projects */}
       <section className="max-w-5xl mx-auto px-6 pt-16 pb-20">
         <div className="flex items-baseline justify-between mb-2">
-          <p className="font-mono text-xs text-stone/40 tracking-widest uppercase">01 — Projects</p>
+          <p className="font-mono text-xs text-accent tracking-widest uppercase">01 — Projects</p>
           <Link
             to="/projects"
-            className="font-mono text-xs text-stone/40 hover:text-ink dark:hover:text-chalk transition-colors"
+            className="group/link font-mono text-xs text-stone/40 hover:text-accent transition-colors inline-flex items-center gap-1"
           >
-            All →
+            All
+            <ArrowUpRight
+              size={11}
+              className="transition-transform duration-200 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+            />
           </Link>
         </div>
         {featuredProjects.map((project, i) => (
@@ -136,12 +182,16 @@ export default function Home() {
       {/* Writing */}
       <section className="max-w-5xl mx-auto px-6 pb-32 border-t border-mist/40 dark:border-white/5 pt-16">
         <div className="flex items-baseline justify-between mb-2">
-          <p className="font-mono text-xs text-stone/40 tracking-widest uppercase">02 — Writing</p>
+          <p className="font-mono text-xs text-[#6D28D9] dark:text-[#D8B4FE] tracking-widest uppercase">02 — Writing</p>
           <Link
             to="/blog"
-            className="font-mono text-xs text-stone/40 hover:text-ink dark:hover:text-chalk transition-colors"
+            className="group/link font-mono text-xs text-stone/40 hover:text-accent transition-colors inline-flex items-center gap-1"
           >
-            All →
+            All
+            <ArrowUpRight
+              size={11}
+              className="transition-transform duration-200 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+            />
           </Link>
         </div>
         {featuredPosts.map((post) => (
