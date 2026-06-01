@@ -137,7 +137,7 @@ export default function BlogPost() {
   const post = blogPosts.find((p) => p.slug === slug)
   const [claps, setClaps] = useState(0)
   const [justClapped, setJustClapped] = useState(false)
-  const categoryLabel = post?.category === 'tech' ? 'Engineering' : 'Money notes'
+  const categoryLabel = post?.category === 'tech' ? 'Engineering' : 'Finance'
   const categoryClass =
     post?.category === 'tech'
       ? 'bg-accent text-white'

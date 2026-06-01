@@ -20,7 +20,7 @@ const postAccents = {
 
 const postLabels = {
   tech: 'Engineering',
-  finance: 'Money notes',
+  finance: 'Finance',
 }
 
 const currentLearning = ['Kafka internals', 'Database indexing', 'Financial planning']

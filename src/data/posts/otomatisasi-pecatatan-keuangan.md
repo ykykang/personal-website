@@ -5,56 +5,56 @@ category: finance
 date: Jun 1, 2026
 readTime: 12 min read
 slug: otomasi-bca-notion-apps-script
-featured: true 
+featured: false
 ---
 
 # Otomasi Pencatatan Keuangan dari Email BCA ke Notion dengan Google Apps Script dan Claude AI
 
-> Capek catat pengeluaran manual? Artikel ini membahas cara membangun sistem pencatatan keuangan otomatis yang membaca email notifikasi transaksi BCA, mengkategorisasikannya pakai AI, dan menyimpannya ke Notion — lengkap dengan laporan bulanan dan tracking saldo akun.
+> Capek catat pengeluaran manual? Gue juga. Makanya gue bikin sistem yang baca email notifikasi BCA, kategorisasi otomatis pakai AI, terus masukin ke Notion — semua tanpa input manual sama sekali.
 
 ---
 
-## Latar Belakang
+## Awal Cerita
 
-Setiap kali transaksi lewat myBCA, BCA selalu kirim email notifikasi ke Gmail. Email itu berisi semua informasi yang dibutuhkan: tanggal, nominal, nama merchant, dan nomor referensi. Masalahnya, informasi ini terpendam di inbox dan tidak pernah dipakai untuk apapun.
+Jadi gini, setiap kali transaksi lewat myBCA, pasti ada email masuk ke Gmail. Isinya lengkap — tanggal, nominal, nama merchant, nomor referensi. Tapi email-email itu cuma numpuk di inbox, nggak kepake buat apa-apa.
 
-Dari situ muncul ide: bagaimana kalau email-email ini otomatis terbaca, datanya diekstrak, dikategorisasi, lalu disimpan ke Notion sebagai catatan keuangan?
+Dari situ gue mikir: *gimana kalau email ini otomatis kebaca, datanya keambil, terus masuk ke Notion sebagai catatan keuangan?*
 
-Hasilnya adalah sistem yang sepenuhnya otomatis — tanpa perlu input manual, tanpa perlu buka aplikasi khusus. Cukup bertransaksi seperti biasa, semua tercatat sendiri.
+Setelah beberapa waktu ngulik, jadilah sistem yang sekarang jalan otomatis. Tinggal transaksi seperti biasa, semua kecatat sendiri. Nggak perlu buka aplikasi, nggak perlu input manual.
 
 ---
 
-## Apa yang Dibangun
+## Kira-kira Sistem Ini Ngapain?
 
-Sistem ini terdiri dari beberapa komponen yang bekerja bersama:
+Alurnya simpel:
 
 ```
 Email BCA masuk ke Gmail
         ↓
-Google Apps Script (jalan tiap 15 menit)
+Google Apps Script jalan tiap 15 menit
         ↓
-Ekstrak data: tanggal, nominal, merchant
+Ambil data: tanggal, nominal, merchant
         ↓
 Cek cache merchant
-  ├── Cache HIT  → pakai hasil cache (gratis)
-  └── Cache MISS → Claude Haiku API
-                       ↓
-                  Tentukan budget, kategori,
-                  dan deskripsi yang readable
+  ├── Udah pernah → pakai hasil cache (gratis!)
+  └── Belum pernah → tanya Claude AI
+                         ↓
+                    Dapat budget, kategori,
+                    dan nama yang lebih enak dibaca
         ↓
-Simpan ke Notion Database
+Simpan ke Notion
         ↓
-Mark email as read
+Email di-mark as read
 ```
 
-Di Notion, setiap transaksi tersimpan dengan:
-- **Nama** yang readable ("Makan di Marugame" bukan "MARUGAME UDON MALL XYZ 12345")
+Setiap transaksi masuk ke Notion dengan info:
+- **Nama** yang readable — "Makan di Marugame" bukan "MARUGAME UDON MALL XYZ 12345"
 - **Budget** — Need, Social, Goal, atau Saving
 - **Kategori** — Makanan & Minuman, Transportasi, Belanja, dll
-- **Relasi ke akun** — BCA, GoPay, ShopeePay, dll
-- **Merchant asli** tersimpan di body halaman sebagai referensi
+- **Akun sumber** — BCA, GoPay, ShopeePay, dll
+- **Nama merchant asli** — tersimpan di body halaman sebagai referensi
 
-Setiap tanggal 1, laporan bulanan otomatis dibuat di Notion:
+Dan tiap tanggal 1, laporan bulanan otomatis muncul di Notion:
 
 ```
 📊 Laporan Mei 2026
@@ -67,10 +67,10 @@ Goal   (2.5%) → Rp   349.000 / Rp   361.074  ✅
 Saving (45%)  → Rp 20.000.000 / Rp 6.499.330 ✅ OVER TARGET
 
 🗂️ Kategori
-Makanan & Minuman    → Rp 750.000
-Transportasi         → Rp 200.000
-Belanja              → Rp 500.000
-Tagihan & Utilitas   → Rp 450.000
+Makanan & Minuman  → Rp 750.000
+Transportasi       → Rp 200.000
+Belanja            → Rp 500.000
+Tagihan & Utilitas → Rp 450.000
 
 📈 Ringkasan
 Total Keluar → Rp 2.219.000 / Rp 7.582.552  ✅
@@ -79,26 +79,26 @@ Sisa Budget  → Rp 5.363.552
 
 ---
 
-## Komponen yang Dibutuhkan
+## Yang Perlu Disiapkan
 
-Sebelum mulai, pastikan sudah punya:
+Nggak banyak kok, dan hampir semuanya gratis:
 
-| Komponen | Keterangan | Biaya |
+| Yang dibutuhkan | Keterangan | Biaya |
 |---|---|---|
-| Akun Google (Gmail) | Untuk baca email BCA | Gratis |
-| Akun Notion | Sebagai database | Gratis |
-| Google Apps Script | Untuk menjalankan script | Gratis |
-| Anthropic API | Untuk kategorisasi AI | ~$0.00006/transaksi |
+| Akun Google (Gmail) | Buat baca email BCA | Gratis |
+| Akun Notion | Database pencatatan | Gratis |
+| Google Apps Script | Buat jalanin script | Gratis |
+| Anthropic API | AI buat kategorisasi | ~$0.00006/transaksi |
 
-Untuk Anthropic API, top up minimum $5 sudah cukup untuk puluhan ribu transaksi. Dengan sistem cache, merchant yang sama tidak akan di-charge ulang.
+Buat Anthropic API, top up $5 aja udah cukup buat puluhan ribu transaksi. Dan makin lama dipake, makin murah — karena merchant yang sama nggak di-charge ulang (udah ke-cache).
 
 ---
 
 ## Setup Notion
 
-### Database yang Dibutuhkan
+### Database yang Perlu Dibuat
 
-Buat empat database di Notion dengan nama persis seperti berikut (nama ini penting karena script akan mencarinya otomatis):
+Bikin empat database di Notion. Nama databasenya harus persis sama karena script bakal nyari otomatis berdasarkan nama.
 
 **1. Transactions**
 
@@ -132,7 +132,7 @@ Buat empat database di Notion dengan nama persis seperti berikut (nama ini penti
 | Total Sent | Rollup |
 | Total Received | Rollup |
 
-Formula `Current Balance`:
+Formula `Current Balance`-nya:
 ```
 prop("Initial Balance") + prop("Total Income") + prop("Total Received") - prop("Total Expenses") - prop("Total Sent")
 ```
@@ -149,11 +149,11 @@ prop("Initial Balance") + prop("Total Income") + prop("Total Received") - prop("
 
 **4. Halaman Laporan Bulanan**
 
-Buat halaman kosong bernama `Laporan Bulanan`. Script akan otomatis isi dengan struktur `2026 → Mei 2026`.
+Bikin halaman kosong bernama `Laporan Bulanan`. Script yang bakal isi otomatis dengan struktur `2026 → Mei 2026`.
 
 ### Isi Database Accounts
 
-Tambahkan semua akun yang dimiliki:
+Tambah semua akun yang kamu punya. Mau sebanyak apapun — BCA, e-wallet, investasi, sampai akun untuk nyimpen piutang juga bisa:
 
 | Name | Type |
 |---|---|
@@ -161,51 +161,48 @@ Tambahkan semua akun yang dimiliki:
 | GoPay | Virtual Account |
 | ShopeePay | Virtual Account |
 | OVO | Virtual Account |
-| DANA | Virtual Account |
 | Bibit | Investment |
 | Dana Liburan | Goal |
 | Daniar Sri | Receivable |
 | Tunai | Cash |
-| ... | ... |
 
 ### Connect Notion Integration
 
 1. Buka [notion.so/my-integrations](https://www.notion.so/my-integrations)
-2. Buat integration baru, beri nama `BCA Tracker`
+2. Bikin integration baru, kasih nama `BCA Tracker`
 3. Copy **Internal Integration Token**
-4. Connect integration ke semua database dan halaman di atas
+4. Connect integration ke semua database dan halaman di atas (klik `...` → `Connect to` di setiap database)
 
 ---
 
 ## Setup Google Apps Script
 
 1. Buka [script.google.com](https://script.google.com)
-2. Buat project baru
+2. Bikin project baru
 3. Hapus semua kode yang ada
-4. Paste script (lihat bagian [Script Lengkap](#script-lengkap))
-5. Isi bagian konfigurasi:
+4. Paste script dari GitHub (link di bawah)
+5. Isi dua baris ini di bagian konfigurasi:
 
 ```js
 const NOTION_TOKEN      = 'secret_xxx...'; // dari Notion Integration
 const ANTHROPIC_API_KEY = 'sk-ant-xxx...'; // dari console.anthropic.com
 ```
 
-Hanya dua baris itu yang perlu diisi. Semua database ID, account ID, dan konfigurasi lainnya akan ditemukan otomatis oleh script.
+Cuma dua baris itu. Database ID, account ID, semua ditemukan otomatis oleh script.
 
 ---
 
-## Cara Kerja Detail
+## Cara Kerjanya
 
-### Ekstraksi Data Email
+### Baca Email BCA
 
-Email notifikasi BCA hadir dalam beberapa format tergantung jenis transaksi:
+Email BCA datang dalam beberapa format tergantung jenis transaksinya:
 
 **QRIS:**
 ```
 Pembayaran Ke     : MARUGAME UDON MALL
 Total Bayar       : IDR 151,000.00
 Tanggal Transaksi : 29 Mei 2026 12:30:00
-Nomor Referensi   : 9527120260529...
 ```
 
 **Transfer:**
@@ -221,160 +218,156 @@ Nama Perusahaan/Produk : PT DOMPET ANAK BANGSA / GOPAY TOPUP
 Total Bayar            : IDR 200,000.00
 ```
 
-Script menggunakan regex untuk mengekstrak semua field ini tanpa perlu AI — lebih cepat dan gratis.
+Script pakai regex buat ekstrak semua field ini — nggak perlu AI, lebih cepat, dan gratis.
 
-### Deteksi Transfer E-Wallet
+### Top Up E-Wallet Otomatis Jadi Transfer
 
-Top up e-wallet otomatis terdeteksi sebagai `Transfer`, bukan `Expense`. Script punya mapping merchant ke akun tujuan:
+Ini yang gue suka. Top up GoPay nggak dicatat sebagai pengeluaran, tapi sebagai **transfer dari BCA ke GoPay**. Saldo BCA berkurang, saldo GoPay bertambah. Script udah punya mapping-nya:
 
 ```
-PT DOMPET ANAK BANGSA / GOPAY TOPUP     → GoPay
+PT DOMPET ANAK BANGSA / GOPAY TOPUP      → GoPay
 PT AIRPAY INTERNATIONAL INDONE / SHOPEEPAY → ShopeePay
-PT VISIONET INTERNASIONAL / OVO          → OVO
-PT ESPAY DEBIT INDONESIA KOE / DANA      → DANA
+PT VISIONET INTERNASIONAL / OVO           → OVO
+PT ESPAY DEBIT INDONESIA KOE / DANA       → DANA
 ```
 
-Jadi top up GoPay Rp200.000 akan tercatat sebagai transfer dari BCA ke GoPay, dan saldo keduanya terupdate otomatis.
+### AI yang Hemat Token
 
-### Kategorisasi AI dengan Cache
-
-Untuk setiap transaksi baru, script mengirim nama merchant ke Claude Haiku dengan prompt yang berisi aturan kategorisasi dan contoh-contoh spesifik. Claude akan mengembalikan tiga hal:
+Setiap merchant baru, script nanya ke Claude Haiku buat dapet tiga hal:
 
 1. **Budget** — Need / Social / Goal / Saving
 2. **Kategori** — Makanan & Minuman / Transportasi / dll
-3. **Deskripsi** — teks yang mudah dibaca manusia
+3. **Deskripsi** — yang enak dibaca manusia
 
-Hasilnya di-cache berdasarkan nama merchant. Transaksi INDOMARET kedua, ketiga, dan seterusnya tidak akan hit API — langsung ambil dari cache. Ini membuat biaya API sangat efisien.
+Hasilnya di-cache. Transaksi ke INDOMARET yang kedua, ketiga, dst — langsung dari cache, nggak kena charge API. Ini yang bikin biayanya super murah.
 
 ### Sistem Budget
 
-Budget dihitung berdasarkan persentase income bulan sebelumnya:
+Budget dihitung dari persentase income bulan sebelumnya:
 
-| Budget | Persentase | Deskripsi |
+| Budget | Persentase | Artinya |
 |---|---|---|
-| Need | 50% | Kebutuhan primer |
+| Need | 50% | Kebutuhan sehari-hari |
 | Saving | 45% | Tabungan & investasi |
-| Social | 2.5% | Pengeluaran sosial |
-| Goal | 2.5% | Pembelian jangka panjang |
+| Social | 2.5% | Jajan, nongkrong, hadiah |
+| Goal | 2.5% | Beli barang mahal jangka panjang |
 
-Logika waktu: gaji masuk tanggal 25 April → digunakan sebagai dasar budget Mei. Ini mengikuti siklus keuangan yang lebih realistis dibanding menggunakan income bulan yang sama.
-
-### Auto-Discovery Database
-
-Script tidak memerlukan hardcode database ID. Saat pertama kali jalan, script akan mencari semua database dan halaman yang sudah di-connect ke integration, lalu menyimpan hasilnya ke cache. Jika nama database di Notion berubah atau ada database baru, cukup jalankan `resetDbCache()`.
+Kenapa pakai income bulan sebelumnya? Karena gaji biasanya masuk tanggal 25 — jadi gaji April jadi dasar budget Mei. Lebih realistis dibanding pakai income bulan yang sama.
 
 ---
 
-## Menjalankan Script
+## Jalankan Pertama Kali
 
-### Pertama Kali
-
-Jalankan fungsi-fungsi ini secara berurutan di Apps Script:
+Di Apps Script, jalankan fungsi-fungsi ini secara berurutan:
 
 ```
-1. debugDiscovery()     → verifikasi semua database ditemukan
-2. resetAll()           → bersihkan semua cache
+1. debugDiscovery()     → pastikan semua database ketemu
+2. resetAll()           → bersihin semua cache
 3. checkExpenseEmails() → sync email pertama kali
 ```
 
-### Setup Trigger Otomatis
+### Set Trigger Otomatis
 
-Di Apps Script, buka menu **Triggers** dan buat tiga trigger:
+Buka menu **Triggers** di Apps Script, bikin dua trigger:
 
 | Fungsi | Jadwal |
 |---|---|
 | `checkExpenseEmails` | Setiap 15 menit |
-| `generateLaporanBulanan` | Tanggal 1 setiap bulan |
+| `generateLaporanBulanan` | Tanggal 1 tiap bulan |
 
 ### Fungsi Maintenance
 
-| Fungsi | Kapan Dijalankan |
+Sesekali mungkin butuh ini:
+
+| Fungsi | Kapan dipake |
 |---|---|
 | `resetAll()` | Reset semua cache dari awal |
-| `resetAccountCache()` | Setelah tambah akun baru di Notion |
-| `resetMerchantCache()` | Kalau kategorisasi AI perlu diperbaharui |
-| `resetDbCache()` | Setelah rename database di Notion |
-| `resetPageCache()` | Setelah hapus halaman laporan di Notion |
+| `resetAccountCache()` | Habis tambah akun baru di Notion |
+| `resetMerchantCache()` | Mau update kategorisasi AI |
+| `resetDbCache()` | Habis rename database di Notion |
 
 ---
 
-## Mengelola Goal dan Piutang
+## Goal dan Piutang
 
-### Goal Finansial
+### Nabung untuk Goal Finansial
 
-Buat akun baru di database Accounts dengan tipe `Goal`:
+Bikin akun baru di Accounts dengan tipe `Goal`:
 
 ```
-Dana Liburan Jepang  | Goal | Target: Rp 15.000.000
-Dana Laptop Baru     | Goal | Target: Rp 8.000.000
+Dana Liburan Jepang | Goal
+Dana Laptop Baru    | Goal
+Dana DP Rumah       | Goal
 ```
 
-Setiap transfer ke akun Goal akan menambah saldonya secara otomatis via Rollup. Tambahkan kolom `Target Amount` (Number) dan formula `Progress`:
+Mau lihat progress? Tambah kolom `Target Amount` (Number) dan formula:
 
 ```
 round(prop("Current Balance") / prop("Target Amount") * 100) & "%"
 ```
 
-### Piutang
+Setiap transfer ke akun Goal, saldonya otomatis bertambah.
 
-Buat akun baru dengan tipe `Receivable` untuk setiap orang yang punya hutang:
+### Catat Piutang
+
+Bikin akun baru dengan tipe `Receivable` per orang:
 
 ```
 Daniar Sri | Receivable
 Aldi       | Receivable
 ```
 
-Transfer ke akun Receivable = uang keluar (piutang bertambah). Transfer dari akun Receivable = uang balik (piutang berkurang). Saldo 0 artinya sudah lunas.
+Transfer ke akun Receivable = piutang bertambah. Transfer dari akun Receivable = dibayar balik. Saldo 0 = lunas. Simpel!
 
 ---
 
-## Estimasi Biaya
+## Berapa Biayanya?
 
-Dengan Anthropic Claude Haiku:
+Dengan Claude Haiku (model paling murah dari Anthropic):
 
 | Kondisi | Biaya |
 |---|---|
-| Transaksi merchant baru | ~$0.00006 per transaksi |
-| Transaksi merchant yang sudah di-cache | $0 |
-| 1000 transaksi (campuran) | ~$0.03 |
-| Top up $5 | Cukup untuk >80.000 transaksi baru |
+| Merchant baru (belum di-cache) | ~$0.00006 per transaksi |
+| Merchant yang udah di-cache | $0 |
+| 1000 transaksi campuran | ~$0.03 |
+| Top up $5 | Cukup >80.000 transaksi baru |
 
-Semakin lama sistem berjalan, semakin banyak merchant yang ter-cache, semakin kecil biaya API-nya.
-
----
-
-## Keterbatasan
-
-Beberapa hal yang perlu diketahui:
-
-- **Hanya BCA** — sistem ini dirancang khusus untuk email notifikasi BCA (myBCA). Bank lain memiliki format email yang berbeda dan perlu parser tersendiri.
-- **Gmail saja** — email harus masuk ke Gmail. Jika menggunakan provider email lain, perlu penyesuaian.
-- **Transaksi tunai tidak tercatat** — sistem hanya bisa membaca transaksi digital yang menghasilkan notifikasi email.
-- **Kategorisasi AI tidak 100% akurat** — terutama untuk merchant yang ambigu. Selalu bisa di-override manual di Notion.
-- **Lookback 30 hari** — secara default script hanya memproses email 30 hari terakhir. Bisa diubah via konstanta `LOOKBACK_DAYS`.
+Makin lama dipake, makin murah. Cache merchant terus bertambah, API makin jarang dipanggil.
 
 ---
 
-## Tips Penggunaan
+## Kekurangan yang Perlu Tahu
 
-**Tambah merchant ke prompt AI** — kalau ada merchant yang sering salah dikategorisasi, tambahkan sebagai contoh di prompt Claude. Contoh: `WARTEG BAHARI => Need, Makanan & Minuman, "Makan di Warteg"`.
+Sebelum nyoba, ada beberapa hal yang perlu diketahui:
 
-**Reset cache setelah update prompt** — jalankan `resetMerchantCache()` supaya semua merchant dikategorisasi ulang dengan prompt yang baru.
+- **Khusus BCA** — sistem ini cuma bisa baca format email notifikasi BCA. Bank lain punya format yang beda dan perlu parser sendiri.
+- **Harus pakai Gmail** — kalau emailnya di provider lain, perlu penyesuaian.
+- **Transaksi tunai nggak ke-record** — cuma transaksi digital yang ada email notifikasinya.
+- **AI nggak 100% akurat** — terutama merchant yang namanya ambigu. Tapi bisa di-override manual di Notion kapanpun.
+- **Default lookback 30 hari** — email lebih dari sebulan nggak diproses. Bisa diubah di konstanta `LOOKBACK_DAYS`.
 
-**Isi Saldo Awal akun** — untuk akun yang sudah punya saldo sebelum sistem ini dipasang, isi kolom `Initial Balance` di database Accounts.
+---
 
-**Input income rutin** — sistem laporan bulanan bergantung pada data di database Income. Pastikan income setiap bulan selalu diinput agar budget terhitung dengan benar.
+## Tips Biar Makin Optimal
+
+**Update prompt kalau ada merchant yang sering salah** — tinggal tambahin contoh di bagian prompt Claude. Misalnya: `WARTEG BAHARI => Need, Makanan & Minuman, "Makan di Warteg"`. Habis itu jalanin `resetMerchantCache()`.
+
+**Isi Saldo Awal akun** — kalau akun udah punya saldo sebelum sistem ini dipasang, isi kolom `Initial Balance` di Accounts biar saldonya akurat.
+
+**Input income rutin** — laporan bulanan butuh data di database Income. Pastikan income tiap bulan selalu diinput, minimal sekali sebulan habis gajian.
 
 ---
 
 ## Penutup
 
-Sistem ini dibangun untuk menyelesaikan masalah yang sangat spesifik: terlalu malas catat keuangan manual tapi tetap ingin tahu kemana uang pergi. Dengan memanfaatkan infrastruktur yang sudah ada — Gmail, Notion, dan Google Apps Script — biaya operasional hampir nol.
+Sistem ini gue bangun buat nyelesain masalah yang sangat spesifik: males catat keuangan manual tapi tetap mau tahu kemana uang pergi.
 
-Yang menarik dari pendekatan ini adalah kombinasi antara regex (untuk ekstraksi data yang deterministik) dan AI (untuk kategorisasi yang fleksibel). Regex tidak salah untuk field yang formatnya konsisten seperti tanggal dan nominal. AI dipakai hanya untuk hal yang memang membutuhkan pemahaman konteks — yaitu menentukan apakah "INDOMARET D 12345" itu belanja kebutuhan atau bukan.
+Yang menarik dari pendekatan ini adalah kombinasi antara **regex** dan **AI**. Regex dipake buat hal yang formatnya konsisten seperti tanggal dan nominal — cepat, akurat, gratis. AI dipake cuma buat hal yang butuh pemahaman konteks, yaitu kategorisasi merchant. Dan dengan cache, AI makin jarang dipanggil seiring waktu.
 
-Sistem ini masih bisa dikembangkan lebih jauh: support bank lain, notifikasi over budget via email/Telegram, dashboard visual, atau bahkan mobile app. Tapi untuk kebutuhan sehari-hari, yang ada sekarang sudah lebih dari cukup.
+Masih banyak yang bisa dikembangin: support bank lain, notifikasi over budget via Telegram, dashboard visual, atau mobile app. Tapi untuk kebutuhan sehari-hari, yang ada sekarang udah lebih dari cukup.
+
+Kalau kamu nyoba implementasi ini dan nemuin masalah, feel free reach out!
 
 ---
 
-*Script lengkap dan panduan instalasi tersedia di [GitHub](#).*
+*Script lengkap tersedia di [GitHub](#). Kalau ada pertanyaan atau improvement, open issue aja.*

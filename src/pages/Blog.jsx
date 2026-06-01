@@ -6,7 +6,7 @@ import { ArrowUpRight } from 'lucide-react'
 
 function PostCard({ post }) {
   const ref = useScrollReveal()
-  const categoryLabel = post.category === 'tech' ? 'Engineering' : 'Money notes'
+  const categoryLabel = post.category === 'tech' ? 'Engineering' : 'Finance'
   const categoryClass =
     post.category === 'tech'
       ? 'bg-accent text-white'
@@ -66,7 +66,7 @@ export default function Blog() {
         {[
           { key: 'all', label: 'All Posts' },
           { key: 'tech', label: 'Engineering' },
-          { key: 'finance', label: 'Money notes' },
+          { key: 'finance', label: 'Finance' },
         ].map(({ key, label }) => (
           <button
             key={key}
